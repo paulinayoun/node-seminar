@@ -1,0 +1,134 @@
+<script>
+    function writeComment() {
+        var form = document.getElementById("form_comment");
+        var userId = form.userId.value;
+        var userNm = form.userNm.value;
+
+        var btnSubmit = document.getElementById("btnSubmit");
+        var type = btnSubmit.getAttribute("data-key");
+
+        var methodNm = (type == "1" ? "post" : "put"); // 1: insert[post] , 2: update[put]
+
+        if (userId == null || userId == "") {
+            alert("사용자 아이디를 입력하세요.");
+            return;
+        }
+
+        if (userNm == null || userNm == "") {
+            alert("이름을 입력하세요.");
+            return;
+        }
+
+        axios({
+            method: methodNm,
+            url: "http://localhost:8888/users",
+            data: {
+                userId: userId,
+                userNm: userNm
+            }
+        })
+            .then((rep) => { return rep.data; })
+            .then((data) => {
+                window.location.reload();
+            });
+    }
+
+    function updateComment(elem) {
+        var row = elem.parentNode.parentNode;
+
+        var userId = row.querySelector("#userId").textContent.trim();
+        var userNm = row.querySelector("#userNm").textContent.trim();
+
+        var txtUserId = document.getElementsByName("userId");
+        var txtUserNm = document.getElementsByName("userNm");
+        var btnSubmit = document.getElementById("btnSubmit");
+
+        txtUserId[0].value = userId;
+        txtUserNm[0].value = userNm;
+        txtUserId[0].readOnly = true;
+        //btnSubmit[0].value = "수정"
+        btnSubmit.innerHTML = "수정";
+        btnSubmit.setAttribute("data-key", "2");
+
+    }
+
+    function deleteComment(elem) {
+        var row = elem.parentNode.parentNode;
+
+        var userId = row.querySelector("#userId").textContent.trim();
+
+        axios({
+            method: "delete",
+            url: "http://localhost:8888/users",
+            data: {
+                userId: userId
+            }
+        })
+            .then((response) => {
+                alert("정상적으로 삭제되었습니다.");
+                window.location.reload();
+            })
+    }
+
+</script>
+<html>
+
+<head>
+    <title> 아이디 </title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div>
+        <form id="form_comment">
+            <fieldset>
+                <legend>아이디 등록</legend>
+                <div><input name="userId" type="text" placeholder="사용자 아이디"></div>
+                <div><input name="userNm" type="text" placeholder="사용자 이름"></div>
+                <!-- <div><input name="regDate" type="text" placeholder="등록일자"></div> -->
+                <div id="button-group">
+                    <button type="button" id="btnSubmit" data-key="1" onclick="writeComment();">등록</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <br>
+    <table id="visitr_list" border="1" cellspacing="0" cellpadding="5">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>작성자</th>
+                <th>등록일자</th>
+                <th>수정</th>
+                <th>삭제</th>
+            </tr>
+        </thead>
+        <tbody id="userInfo">
+            <% for ( let i=0; i < data.length; i++ ){ %>
+                <tr>
+                    <td style="text-align: center;">
+                        <span>
+                            <%=i+1%>
+                        </span>
+                        <span id="userId" style="display:none">
+                            <%=data[i].USER_ID%>
+                        </span>
+                    </td>
+                    <td>
+                        <span id="userNm">
+                            <%=data[i].USER_NM%>
+                        </span>
+                    <td>
+                        <%=data[i].REG_DATE%>
+                    </td>
+                    <td><button type="button" onclick="updateComment(this);">수정</button></td>
+                    <td><button type="button" onclick="deleteComment(this);">삭제</button></td>
+                </tr>
+                <% } %>
+        </tbody>
+    </table>
+</body>
+
+</html>

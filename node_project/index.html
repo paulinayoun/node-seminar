@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<script>
+    function getSound() {
+        const name = document.getElementById('txtNm').value;
+        if (name == "") {
+            alert("입력하세요");
+            return;
+        }
+
+        fetch(`http://127.0.0.1:8888/main/${name}`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+
+                document.getElementById('sound').innerHTML = data.sound;
+            });
+    }
+
+    function dbConn() {
+        fetch(`http://127.0.0.1:8888/users`)
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data);
+
+                document.getElementById('dbConnNm').innerHTML = data.length; //data[0].USER_NM; 
+            });
+    }
+</script>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="view-port" content="width=device-width, initial-scale=1.0">
+    <title>정훈이네 홈페이지 환영환영</title>
+</head>
+
+<body>
+    <h1 id="sound"></h1><br />
+    <h1 id="dbConnNm"></h1><br />
+    <input type="text" id="txtNm" name="txtNm">
+    <button onClick="getSound()">API 요청</button>
+    <button onClick="dbConn()">DB TEST</button>
+</body>
+
+</html>
