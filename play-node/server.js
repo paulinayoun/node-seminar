@@ -61,6 +61,13 @@ app.get('/', (req, res) => {
 // 합 계산 및 결과 반환
 app.post('/calculate', (req, res) => {
     const number = parseInt(req.body.number);
+
+    // 재귀적으로 합을 계산하는 함수
+    function sum(n) {
+        if (n === 1) return 1; // base case
+        return n + sum(n - 1); // recursive case
+    }
+    
     if (!isNaN(number) && number > 0) {
         // let total = 0;
         // for (let i = 1; i <= number; i++) {
